@@ -5,6 +5,7 @@ import typeEqualize from "../util/typeEqualize.js";
  * @typedef SavedataValues
  * @property {number} runStartTime
  * @property {number} lastTickAt
+ * @property {number} autobuyCharge
  * @property {number} time
  * @property {number} prestigeTime
  * @property {Decimal} gold
@@ -19,12 +20,13 @@ import typeEqualize from "../util/typeEqualize.js";
 const savedataDefaults = {
   runStartTime: new Date().getTime(),
   lastTickAt: new Date().getTime(),
+  autobuyCharge: 0,
   time: 0,
   prestigeTime: 0,
   gold: Decimal(10),
-  selectedUpgrades: ["Gold Mine"],
+  selectedUpgrades: [],
   boughtUpgrades: Array(10).fill().map(_ => []),
-  upgradeTiers: {"Gold Mine": 0},
+  upgradeTiers: { },
 };
 
 

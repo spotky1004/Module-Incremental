@@ -1,7 +1,7 @@
 import Decimal from "../lib/decimal.min.js";
 import roman from "../util/roman.js";
 
-const UPGRADE_LEVEL_LIMIT = 250;
+const UPGRADE_LEVEL_LIMIT = 50;
 
 /**
  * @callback UpgradeEffectFunc

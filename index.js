@@ -13,20 +13,23 @@ import notation from "./util/notation.js";
 const saveKey = "Module Incremental";
 const player = new Player();
 const savedata = player.savedata;
-player.load(saveKey);
+// player.load(saveKey);
+if (savedata.selectedUpgrades.length === 0) savedata.selectedUpgrades.push(...upgradeTypes);
 for (let i = 0; i < upgradeTypes.length; i++) {
-  savedata.upgradeTiers[upgradeTypes[i]] ??= 0;
+  savedata.upgradeTiers[upgradeTypes[i]] ??= Math.floor(Math.random() * 3)+2;
 }
-player.savedata.selectedUpgrades = [...upgradeTypes];
 
 function buyUpgrade(idx) {
   const upgrade = upgradeList[idx];
   if (savedata.gold.gt(upgrade.cost)) {
-    savedata.gold = savedata.gold.sub(upgrade.cost);
     const selectedIdx = savedata.selectedUpgrades.findIndex(upgradeName => upgradeName === upgrade.upgradeName);
+    if (savedata.boughtUpgrades[selectedIdx].includes(upgrade.level)) return;
+    savedata.gold = savedata.gold.sub(upgrade.cost);
     if (selectedIdx === -1) return;
     savedata.boughtUpgrades[selectedIdx].push(upgrade.level);
+    return true;
   }
+  return false;
 }
 elements.upgrades.forEach((v, i) => {
   v.element.addEventListener("click", () => buyUpgrade(i));
@@ -102,6 +105,14 @@ function tick() {
   const goldGain = effects.goldGain.mul(effects.goldGainMult);
   savedata.gold = savedata.gold.add(goldGain.mul(dt/1000));
   elements.gold.innerHTML = notation(savedata.gold);
+
+  savedata.autobuyCharge += effects.autobuy.toNumber() * dt / 1000;
+  if (savedata.autobuyCharge > 1) {
+    for (let i = Math.min(9, Math.floor(savedata.autobuyCharge-1)); i >= 0; i--) {
+      buyUpgrade(i);
+    }
+    savedata.autobuyCharge %= 1;
+  }
 
   requestAnimationFrame(tick);
 }

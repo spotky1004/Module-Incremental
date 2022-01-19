@@ -18,6 +18,24 @@ const upgradeEffects = new UpgradeEffects({
       color: "#ebe7a4",
       operator: "×"
     }
+  },
+  prestigeGain: {
+    defaultValue: 0,
+    effectReducerFunc: (a, b) => a.add(b),
+    display: {
+      name: "Prestige Gain",
+      color: "#345eeb",
+      operator: "+"
+    }
+  },
+  autobuy: {
+    defaultValue: 0,
+    effectReducerFunc: (a, b) => a.add(b),
+    display: {
+      name: "Autobuy",
+      color: "#12e686",
+      operator: "+"
+    }
   }
 });
 

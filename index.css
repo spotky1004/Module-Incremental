@@ -125,10 +125,6 @@ body {
 .upgrade__effect-list__item:hover {
   background-color: #444;
 }
-.upgrade__effect-list__item:hover > .upgrade__effect-list__item__value {
-  font-weight: bold;
-  font-size: 1.2em;
-}
 .upgrade__effect-list__item__name {
   display: inline-block;
 
@@ -138,4 +134,12 @@ body {
 }
 .upgrade__effect-list__item__value {
   font-size: 0.8em;
+}
+.upgrade__effect-list__item:hover > .upgrade__effect-list__item__name {
+  width: 30%;
+  font-size: 0.3em;
+}
+.upgrade__effect-list__item:hover > .upgrade__effect-list__item__value {
+  font-weight: bold;
+  font-size: 1.3em;
 }
