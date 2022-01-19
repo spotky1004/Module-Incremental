@@ -87,6 +87,7 @@ function tick() {
           effectElement.element.style.display = "none";
           continue;
         }
+        effectElement.element.style.display = "";
 
         /** @type {import("./class/UpgradeEffects.js").EffectDisplay} */
         const effectDisplay = upgradeEffects.effectsDatas[effect.name].display;

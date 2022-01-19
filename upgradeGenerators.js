@@ -42,7 +42,7 @@ const upgradeGenerators = [
     color: "#de3535",
     effects: {
       [effect.goldGain]: (tier, level, savedata) => Decimal(level+1).pow(2+tier/2).mul(100+level*(50+tier*20)).mul(Decimal(2+tier/10).pow(level)),
-      [effect.goldGainMult]: (tier, level, savedata) => Decimal(1-0.6/(tier/2+1))
+      [effect.goldGainMult]: (tier, level, savedata) => Decimal(1-0.4/(tier/2+1))
     },
     cost: (tier, level, savedata) => Decimal(1e5).mul(level+1).pow((level+1)**1.5)
   })
