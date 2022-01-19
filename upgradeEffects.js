@@ -36,6 +36,15 @@ const upgradeEffects = new UpgradeEffects({
       color: "#12e686",
       operator: "+"
     }
+  },
+  maxModule: {
+    defaultValue: 4,
+    effectReducerFunc: (a, b) => a.add(b),
+    display: {
+      name: "Max Module",
+      color: "#ffffff",
+      operator: "+"
+    }
   }
 });
 

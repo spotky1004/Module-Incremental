@@ -25,7 +25,7 @@ const savedataDefaults = {
   prestigeTime: 0,
   gold: Decimal(10),
   selectedUpgrades: [],
-  boughtUpgrades: Array(10).fill().map(_ => []),
+  boughtUpgrades: Array(20).fill().map(_ => []),
   upgradeTiers: { },
 };
 

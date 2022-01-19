@@ -13,14 +13,17 @@ import notation from "./util/notation.js";
 const saveKey = "Module Incremental";
 const player = new Player();
 const savedata = player.savedata;
-// player.load(saveKey);
-if (savedata.selectedUpgrades.length === 0) savedata.selectedUpgrades.push(...upgradeTypes);
+player.load(saveKey);
+if (savedata.selectedUpgrades.length === 0) {
+  savedata.selectedUpgrades.push("Gold Mine", "Prestige Gain");
+}
 for (let i = 0; i < upgradeTypes.length; i++) {
-  savedata.upgradeTiers[upgradeTypes[i]] ??= Math.floor(Math.random() * 3)+2;
+  savedata.upgradeTiers[upgradeTypes[i]] ??= 0;
 }
 
 function buyUpgrade(idx) {
   const upgrade = upgradeList[idx];
+  if (typeof upgrade === "undefined") return false;
   if (savedata.gold.gt(upgrade.cost)) {
     const selectedIdx = savedata.selectedUpgrades.findIndex(upgradeName => upgradeName === upgrade.upgradeName);
     if (savedata.boughtUpgrades[selectedIdx].includes(upgrade.level)) return;
@@ -49,18 +52,26 @@ function tick() {
   savedata.prestigeTime += dt;
   savedata.lastTickAt = timeNow;
 
+  const effects = upgradeManager.getUpgradeEffects(savedata);
+
   // Update "upgrade-modules" & "upgrade-list"
+  savedata.selectedUpgrades = [...new Set(savedata.selectedUpgrades)].slice(0, effects.maxModule.toNumber());
   if (timeNow - lastUpgradeUpdateAt > 1000/20) {
     const selectedUpgrades = savedata.selectedUpgrades;
     for (let i = 0; i < elements.upgradeModules.length; i++) {
       const upgrade = upgradeGenerators.find(upgradeGenerator => upgradeGenerator.name === selectedUpgrades[i]);
       const upgradeModuleElement = elements.upgradeModules[i];
       if (typeof upgrade !== "undefined") {
-        upgradeModuleElement.innerHTML = upgrade.name + " T" + savedata.upgradeTiers[upgrade.name];
+        upgradeModuleElement.innerText = upgrade.name + " T" + savedata.upgradeTiers[upgrade.name];
         upgradeModuleElement.style.color = upgrade.color;
       } else {
-        upgradeModuleElement.innerHTML = "Empty";
-        upgradeModuleElement.style.color = "#fff4";
+        if (i >= effects.maxModule.toNumber()) {
+          upgradeModuleElement.innerText = "Locked";
+          upgradeModuleElement.style.color = "#fff1";
+        } else {
+          upgradeModuleElement.innerText = "Empty";
+          upgradeModuleElement.style.color = "#fff4";
+        }
       }
     }
 
@@ -75,9 +86,9 @@ function tick() {
       }
       upgradeElement.element.style.display = "";
 
-      upgradeElement.name.innerHTML = upgrade.name;
+      upgradeElement.name.innerText = upgrade.name;
       upgradeElement.name.style.color = upgrade.color;
-      upgradeElement.cost.innerHTML = notation(upgrade.cost);
+      upgradeElement.cost.innerText = notation(upgrade.cost);
       upgradeElement.cost.style.color = savedata.gold.lt(upgrade.cost) ? "#fc8181" : "";
       upgradeElement.cost.style.setProperty("--progress", savedata.gold.div(upgrade.cost).mul(100)+"%")
 
@@ -93,18 +104,32 @@ function tick() {
 
         /** @type {import("./class/UpgradeEffects.js").EffectDisplay} */
         const effectDisplay = upgradeEffects.effectsDatas[effect.name].display;
-        effectElement.name.innerHTML = effectDisplay.name;
+        effectElement.name.innerText = effectDisplay.name;
         effectElement.name.style.color = effectDisplay.color;
-        effectElement.value.innerHTML = effectDisplay.operator + notation(effect.value);
+        effectElement.value.innerText = effectDisplay.operator + notation(effect.value);
       }
     }
     lastUpgradeUpdateAt = timeNow;
   }
 
-  const effects = upgradeManager.getUpgradeEffects(savedata);
+  
+  let effectElementIdx = 0;
+  for (const effectName in effects) {
+    /** @type {import("./class/UpgradeEffects.js").EffectData} */
+    const effectData = upgradeEffects.effectsDatas[effectName];
+    const operator = effectData.display.operator;
+    if (effects[effectName].eq(effectData.defaultValue)) {
+      elements.effects[effectElementIdx].element.style.display = "none";
+    } else {
+      elements.effects[effectElementIdx].element.style.display = "";
+      elements.effects[effectElementIdx].value.innerText = operator + " " + notation(effects[effectName]);
+    }
+    effectElementIdx++;
+  }
+
   const goldGain = effects.goldGain.mul(effects.goldGainMult);
   savedata.gold = savedata.gold.add(goldGain.mul(dt/1000));
-  elements.gold.innerHTML = notation(savedata.gold);
+  elements.gold.innerText = notation(savedata.gold);
 
   savedata.autobuyCharge += effects.autobuy.toNumber() * dt / 1000;
   if (savedata.autobuyCharge > 1) {

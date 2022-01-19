@@ -27,7 +27,7 @@ const upgradeGenerators = [
     effects: {
       [effect.goldGainMult]: (tier, level, savedata) => Decimal(2+tier/2+level/10)
     },
-    cost: (tier, level, savedata) => factroial(level).mul(Decimal((1000+level*100)/(tier+1)).pow(level+1))
+    cost: (tier, level, savedata) => factroial(level).mul(Decimal((100+level*10)/(tier/3+1)).pow(level+1))
   }),
   new UpgradeGenerator({
     name: "Decay Boost",

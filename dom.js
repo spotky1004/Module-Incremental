@@ -1,12 +1,19 @@
 import roman from "./util/roman.js";
 import notation from "./util/notation.js";
+import upgradeEffects from "./upgradeEffects.js";
 
+/**
+ * @typedef Effect
+ * @property {HTMLDivElement} element
+ * @property {HTMLSpanElement} name
+ * @property {HTMLSpanElement} value
+ */
 /**
  * @typedef Upgrade
  * @property {HTMLSpanElement} element
  * @property {HTMLDivElement} name
  * @property {HTMLDivElement} effectList
- * @property {{ element: HTMLDivElement, name: HTMLSpanElement, value: HTMLSpanElement }[]} effects
+ * @property {Effect[]} effects
  * @property {HTMLDivElement} cost
  */
 const elements = {
@@ -14,12 +21,14 @@ const elements = {
   /** @type {HTMLSpanElement[]} */
   upgradeModules: [],
   /** @type {Upgrade[]} */
-  upgrades: []
+  upgrades: [],
+  /** @type {Effect[]} */
+  effects: [],
 };
 
 // upgrade-modules
 const upgradeModules = document.getElementById("upgrade-modules");
-for (let i = 0; i < 10; i++) {
+for (let i = 0; i < 20; i++) {
   const upgradeModule = document.createElement("span");
   elements.upgradeModules.push(upgradeModule);
   upgradeModules.append(upgradeModule);
@@ -78,6 +87,31 @@ for (let i = 0; i < 10; i++) {
   upgrade.cost.innerHTML = notation(10**(Math.random()*10+i*10));
   upgrade.cost.classList.add("upgrade__cost");
   upgrade.element.appendChild(upgrade.cost);
+}
+
+const effectList = document.getElementById("effect-list");
+for (const effectName in upgradeEffects.effectsDatas) {
+  /** @type {Effect} */
+  const effect = {};
+  elements.effects.push(effect);
+
+  /** @type {import("./class/UpgradeEffects.js").EffectData} */
+  const effectData = upgradeEffects.effectsDatas[effectName];
+  
+  effect.element = document.createElement("div");
+  effect.element.classList.add("effect-list__item");
+  effectList.append(effect.element);
+  
+  effect.name = document.createElement("span");
+  effect.name.classList.add("effect-list__item__name");
+  effect.name.innerHTML = effectData.display.name;
+  effect.name.style.color = effectData.display.color;
+  effect.element.append(effect.name);
+
+  effect.value = document.createElement("span");
+  effect.value.classList.add("effect-list__item__value");
+  effect.value.innerHTML = effectData.display.operator + " " + notation(effectData.defaultValue);
+  effect.element.append(effect.value);
 }
 
 export default elements;
