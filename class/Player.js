@@ -4,6 +4,7 @@ import typeEqualize from "../util/typeEqualize.js";
 /**
  * @typedef SavedataValues
  * @property {number} runStartTime
+ * @property {number} lastTickAt
  * @property {number} time
  * @property {number} prestigeTime
  * @property {Decimal} gold
@@ -17,6 +18,7 @@ import typeEqualize from "../util/typeEqualize.js";
  */
 const savedataDefaults = {
   runStartTime: new Date().getTime(),
+  lastTickAt: new Date().getTime(),
   time: 0,
   prestigeTime: 0,
   gold: Decimal(10),

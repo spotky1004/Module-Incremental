@@ -33,7 +33,6 @@ elements.upgrades.forEach((v, i) => {
 });
 
 let upgradeList = upgradeManager.getUpgradeList(savedata, 10);
-let lastTickAt = new Date().getTime();
 let lastSaveAt = new Date().getTime();
 let lastUpgradeUpdateAt = 0;
 function tick() {
@@ -42,10 +41,10 @@ function tick() {
     player.save(saveKey);
     lastSaveAt = timeNow;
   }
-  const dt = timeNow - lastTickAt;
+  const dt = timeNow - savedata.lastTickAt;
   savedata.time += dt;
   savedata.prestigeTime += dt;
-  lastTickAt = timeNow;
+  savedata.lastTickAt = timeNow;
 
   // Update "upgrade-modules" & "upgrade-list"
   if (timeNow - lastUpgradeUpdateAt > 1000/20) {
