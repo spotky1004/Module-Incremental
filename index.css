@@ -1,0 +1,141 @@
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+
+  font-size: 1.6vmin;
+  color: #fff;
+  font-family: 'Share Tech Mono', monospace;
+  user-select: none;
+}
+*::-webkit-scrollbar {
+  width: 0.7vmin;
+}
+*::-webkit-scrollbar-thumb {
+  background-color: #fff;
+  border-radius: 1vmin;
+  background-clip: padding-box;
+}
+*::-webkit-scrollbar-track {
+  background-color: grey;
+  border-radius: 10px;
+}
+
+body {
+  width: 100vw;
+  height: 100vh;
+
+  background-color: #222;
+  overflow-x: hidden;
+}
+
+#container {
+  width: 100vw;
+  height: 100vh;
+}
+
+#gold {
+  margin-bottom: 1vh;
+  padding-left: 2vw;
+
+  height: 6vh;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  font-size: 4vh;
+  color: #fcf581;
+
+  background-color: #111;
+}
+
+#upgrade-modules {
+  height: 2vh;
+
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+
+  background-color: #111;
+  font-size: 1.4em;
+}
+.upgrade-modules__item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#upgrade-list {
+  width: 100vw;
+  height: 30vh;
+
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+
+  background-color: #111;
+}
+.upgrade {
+  margin: auto;
+  padding: 1vmin;
+  width: 16%;
+  height: 40%;
+
+  background-color: #333;
+  border-radius: 1vmin;
+
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.upgrade:hover {
+  background-color: #222;
+}
+.upgrade__name {
+  font-size: 1.3em;
+  text-align: center;
+  text-shadow: 0 0 0.3vmin #222, 0 0 0.3vmin #222;
+}
+.upgrade__effect-list {
+  height: 65%;
+
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+.upgrade__cost {
+  --progress: 100%;
+
+  text-align: center;
+  color: #fcf581;
+
+  background: linear-gradient(
+    to right,
+    #fff0 0%,
+    #fff0 var(--progress),
+    #fff1 var(--progress),
+    #fff1 100%
+  );
+}
+.upgrade__effect-list__item {
+  transition: all 0.2s;
+}
+.upgrade__effect-list__item > * {
+  transition: all 0.2s;
+}
+.upgrade__effect-list__item:hover {
+  background-color: #444;
+}
+.upgrade__effect-list__item:hover > .upgrade__effect-list__item__value {
+  font-weight: bold;
+  font-size: 1.2em;
+}
+.upgrade__effect-list__item__name {
+  display: inline-block;
+
+  width: 50%;
+  font-size: 0.8em;
+  text-align: center;
+}
+.upgrade__effect-list__item__value {
+  font-size: 0.8em;
+}
