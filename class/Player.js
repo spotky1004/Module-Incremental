@@ -25,7 +25,7 @@ const savedataDefaults = {
   autobuyCharge: 0,
   time: 0,
   prestigeTime: 0,
-  gold: Decimal(10),
+  gold: Decimal(0),
   selectedUpgrades: [],
   boughtUpgrades: Array(20).fill().map(_ => []),
   prestige: new Decimal(0),

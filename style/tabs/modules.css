@@ -42,9 +42,8 @@
 }
 
 #module-wrapper {
-  margin-top: 0.5%;
   width: 100%;
-  height: 85%;
+  height: 88%;
 
   display: flex;
   justify-content: space-evenly;
