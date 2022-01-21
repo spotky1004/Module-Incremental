@@ -18,8 +18,11 @@ function selectModule(idx) {
   idx = Number(idx);
 
   if (idx !== selectedModule?.index) {
-    selectedModule = upgradeGenerators.find(upgradeGenerator => upgradeGenerator.index === idx) ?? null;
-    if (selectedModule === null) return;
+    const module = upgradeGenerators.find(upgradeGenerator => upgradeGenerator.index === idx) ?? null;
+    if (module === null) return;
+    const moduleSavedata = savedata.modules[module.name];
+    if (moduleSavedata.tier < 0) return;
+    selectedModule = module;
     elements.modules.selected.element.style.display = "";
     elements.modules.selected.element.style.setProperty("--color", selectedModule.color);
   } else {

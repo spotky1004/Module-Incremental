@@ -242,6 +242,10 @@
   margin: 0 auto;
   width: 30%;
   height: 10%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
   
   color: var(--col-gold);
   text-align: center;

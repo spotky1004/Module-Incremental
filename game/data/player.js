@@ -5,7 +5,7 @@ import Decimal from "../../lib/decimal.min.js";
 const saveKey = "Module Incremental";
 const player = new Player();
 const savedata = player.savedata;
-// player.load(saveKey);
+player.load(saveKey);
 
 // savedaats fix
 for (const upgradeName in upgradeGeneratorEnum) {
