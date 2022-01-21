@@ -1,26 +1,16 @@
-import Decimal from "./lib/decimal.min.js";
+import upgradeGenerators from "../upgradeGenerators.js";
+import upgradeEffects from "../upgradeEffects.js";
+import upgradeManager from "../upgradeManager.js";
 
-import Player from "./class/Player.js";
-import upgradeEffects from "./upgradeEffects.js";
-import upgradeGenerators from "./upgradeGenerators.js";
-const upgradeTypes = upgradeGenerators.map(v => v.name);
-import UpgradeManager from "./class/UpgradeManager.js";
-const upgradeManager = new UpgradeManager(upgradeEffects, upgradeGenerators);
-import elements from "./dom.js";
+import elements from "../elements.js";
+import { savedata } from "../player.js";
 
-import notation from "./util/notation.js";
+import notation from "../../util/notation.js";
 
-const saveKey = "Module Incremental";
-const player = new Player();
-const savedata = player.savedata;
-player.load(saveKey);
-if (savedata.selectedUpgrades.length === 0) {
-  savedata.selectedUpgrades.push("Gold Mine", "Prestige Gain");
-}
-for (let i = 0; i < upgradeTypes.length; i++) {
-  savedata.upgradeTiers[upgradeTypes[i]] ??= 0;
-}
-
+/**
+ * @param {number} idx 
+ * @returns {boolean}
+ */
 function buyUpgrade(idx) {
   const upgrade = upgradeList[idx];
   if (typeof upgrade === "undefined") return false;
@@ -38,31 +28,24 @@ elements.upgrades.forEach((v, i) => {
   v.element.addEventListener("click", () => buyUpgrade(i));
 });
 
-let upgradeList = upgradeManager.getUpgradeList(savedata, 10);
-let lastSaveAt = new Date().getTime();
-let lastUpgradeUpdateAt = 0;
-function tick() {
-  const timeNow = new Date().getTime();
-  if (timeNow - lastSaveAt > 5000) {
-    player.save(saveKey);
-    lastSaveAt = timeNow;
-  }
-  const dt = timeNow - savedata.lastTickAt;
-  savedata.time += dt;
-  savedata.prestigeTime += dt;
-  savedata.lastTickAt = timeNow;
+/** @type {ReturnType<upgradeManager["getUpgradeList"]>} */
+let upgradeList = [];
+let upgradeListUpdateTime = 0;
+/**
+ * @param {import("../../class/Player.js").SavedataValues} savedata 
+ * @param {number} dt 
+ * @param {ReturnType<upgradeManager["getUpgradeEffects"]>} effects
+ */
+function render(dt, effects) {
+  upgradeListUpdateTime += dt;
 
-  const effects = upgradeManager.getUpgradeEffects(savedata);
-
-  // Update "upgrade-modules" & "upgrade-list"
-  savedata.selectedUpgrades = [...new Set(savedata.selectedUpgrades)].slice(0, effects.maxModule.toNumber());
-  if (timeNow - lastUpgradeUpdateAt > 1000/20) {
+  if (upgradeListUpdateTime > 1000/20) {
     const selectedUpgrades = savedata.selectedUpgrades;
     for (let i = 0; i < elements.upgradeModules.length; i++) {
       const upgrade = upgradeGenerators.find(upgradeGenerator => upgradeGenerator.name === selectedUpgrades[i]);
       const upgradeModuleElement = elements.upgradeModules[i];
       if (typeof upgrade !== "undefined") {
-        upgradeModuleElement.innerText = upgrade.name + " T" + savedata.upgradeTiers[upgrade.name];
+        upgradeModuleElement.innerText = upgrade.name + " T" + savedata.modules[upgrade.name].tier;
         upgradeModuleElement.style.color = upgrade.color;
       } else {
         if (i >= effects.maxModule.toNumber()) {
@@ -109,7 +92,7 @@ function tick() {
         effectElement.value.innerText = effectDisplay.operator + notation(effect.value);
       }
     }
-    lastUpgradeUpdateAt = timeNow;
+    upgradeListUpdateTime = new Date().getTime();
   }
 
   
@@ -126,6 +109,15 @@ function tick() {
     }
     effectElementIdx++;
   }
+}
+
+/**
+ * @param {number} dt 
+ */
+function update(dt) {
+  const effects = upgradeManager.getUpgradeEffects(savedata);
+
+  savedata.selectedUpgrades = [...new Set(savedata.selectedUpgrades)].slice(0, effects.maxModule.toNumber());
 
   const goldGain = effects.goldGain.mul(effects.goldGainMult);
   savedata.gold = savedata.gold.add(goldGain.mul(dt/1000));
@@ -139,7 +131,7 @@ function tick() {
     savedata.autobuyCharge %= 1;
   }
 
-  requestAnimationFrame(tick);
+  render(dt, effects);
 }
 
-tick();
+export default update;

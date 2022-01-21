@@ -1,7 +1,7 @@
 import Decimal from "../lib/decimal.min.js";
 import roman from "../util/roman.js";
 
-const UPGRADE_LEVEL_LIMIT = 50;
+export const UPGRADE_LEVEL_LIMIT = 50;
 
 /**
  * @callback UpgradeEffectFunc
@@ -31,6 +31,7 @@ class UpgradeGenerator {
   /**
    * @typedef UpgradeParams
    * @property {string} name
+   * @property {number} index
    * @property {string} color
    * @property {Object<string, UpgradeEffectFunc>} effects
    * @property {UpgradeCostFunc} cost
@@ -39,9 +40,15 @@ class UpgradeGenerator {
    * @param {UpgradeParams} options 
    */
   constructor(options) {
+    /** @type {options["name"]} */
     this.name = options.name;
+    /** @type {options["index"]} */
+    this.index = options.index;
+    /** @type {options["color"]} */
     this.color = options.color;
+    /** @type {options["effects"]} */
     this.effects = options.effects;
+    /** @type {options["cost"]} */
     this.cost = options.cost;
   }
 

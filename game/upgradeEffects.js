@@ -1,4 +1,4 @@
-import UpgradeEffects from "./class/UpgradeEffects.js";
+import UpgradeEffects from "../class/UpgradeEffects.js";
 
 const upgradeEffects = new UpgradeEffects({
   goldGain: {

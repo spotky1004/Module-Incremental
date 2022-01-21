@@ -1,0 +1,185 @@
+import { UPGRADE_LEVEL_LIMIT as upgradeLevelLimit } from "../../class/UpgradeGenerator.js";
+
+import upgradeGenerators from "../upgradeGenerators.js";
+import upgradeEffects from "../upgradeEffects.js";
+import upgradeManager from "../upgradeManager.js";
+
+import elements from "../elements.js";
+import { savedata } from "../player.js";
+
+import Decimal from "../../lib/decimal.min.js";
+import notation from "../../util/notation.js";
+import roman from "../../util/roman.js";
+
+/** @type {import("../../class/UpgradeGenerator.js").default} */
+let selectedModule = null;
+let selectedPreviewLevel = 0;
+function selectModule(idx) {
+  idx = Number(idx);
+
+  if (idx !== selectedModule?.index) {
+    selectedModule = upgradeGenerators.find(upgradeGenerator => upgradeGenerator.index === idx) ?? null;
+    if (selectedModule === null) return;
+    elements.modules.selected.element.style.display = "";
+    elements.modules.selected.element.style.setProperty("--color", selectedModule.color);
+  } else {
+    elements.modules.selected.element.style.display = "none";
+    selectedModule = null;
+  }
+}
+for (let i = 0; i < elements.modules.grid.length; i++) {
+  elements.modules.grid[i].element.addEventListener("click", function() {
+    selectModule(this.dataset.index);
+  });
+}
+/**
+ * @param {number} n 
+ */
+function chancePreviewLevel(n) {
+  selectedPreviewLevel += n;
+  selectedPreviewLevel = Math.max(0, Math.min(upgradeLevelLimit - 1 , selectedPreviewLevel));
+}
+elements.modules.selected.effect.level.next.addEventListener("click", () => chancePreviewLevel(1));
+elements.modules.selected.effect.level.prev.addEventListener("click", () => chancePreviewLevel(-1));
+elements.modules.selected.button.equip.addEventListener("click", () => {
+  if (selectedModule === null) return;
+  if (savedata.selectedUpgrades.includes(selectedModule.name)) return;
+  savedata.selectedUpgrades.push(selectedModule.name);
+});
+elements.modules.selected.button.upgrade.addEventListener("click", () => {
+  if (canBuyUpgrade()) {
+    savedata.modules[selectedModule.name].tier++;
+  }
+});
+elements.modules.upgrader.button.respec.addEventListener("click", () => {
+  if (!window.confirm("Are you sure to respec Upgraders?")) return;
+  for (const moduleName in savedata.modules) {
+    savedata.modules[moduleName].tier = Math.min(savedata.modules[moduleName].tier, 0);
+  }
+});
+function getUpgraderCost() {
+  return new Decimal(10+savedata.upgraders*2).pow((savedata.upgraders+1)**1.2)
+}
+elements.modules.upgrader.button.buy.addEventListener("click", () => {
+  const cost = getUpgraderCost();
+  if (savedata.prestige.gt(cost)) {
+    savedata.prestige = savedata.prestige.sub(cost);
+    savedata.upgraders += 1;
+  }
+});
+
+function calculateExpReq(tier) {
+  return new Decimal(10+tier**2).pow(tier+1);
+}
+function getUsedUpgrader() {
+  let used = 0;
+  for (const moduleName in savedata.modules) {
+    used += Math.max(1, savedata.modules[moduleName].tier)-1;
+  }
+  return used;
+}
+function getUpgrader() {
+  return savedata.upgraders - getUsedUpgrader();
+}
+function canBuyUpgrade() {
+  if (selectedModule === null) return false;
+  /** @type {savedata["modules"][keyof savedata["modules"]]} */
+  const moduleSave = savedata.modules[selectedModule.name];
+  const expReq = calculateExpReq(moduleSave.tier);
+  if (
+    moduleSave.exp.gt(expReq) &&
+    getUpgrader() >= 1
+  ) {
+    return true;
+  }
+  return false;
+}
+
+/**
+ * @param {number} dt 
+ */
+function render(dt) {
+  /** @type {number[]} */
+  let expReq = [];
+  /** @type {number[]} */
+  let expProgress = [];
+
+  elements.modules.upgrader.button.buy.innerText = notation(getUpgraderCost());
+  elements.modules.upgrader.value.innerText = getUpgrader() + "/" + savedata.upgraders
+
+  for (let i = 0; i < elements.modules.grid.length; i++) {
+    const module = upgradeGenerators.find(upgradeGenerator => upgradeGenerator.index === i);
+    if (typeof module === "undefined") continue;
+    /** @type {import("../upgradeGenerators.js").UpgradeGeneratorType} */
+    const moduleName = module.name;
+    const moduleIndex = module.index;
+    const moduleSavedata = savedata.modules[moduleName];
+    const element = elements.modules.grid[i];
+    
+    element.element.classList[savedata.selectedUpgrades.includes(moduleName) ? "add" : "remove"]("equip");
+    if (moduleSavedata.tier >= 0) {
+      element.element.classList.remove("locked");
+      element.tier.innerText = moduleSavedata.tier;
+      expReq[moduleIndex] = calculateExpReq(moduleSavedata.tier);
+      expProgress[moduleIndex] = Math.min(1, moduleSavedata.exp.div(expReq[moduleIndex]).toNumber());
+      element.exp.innerText = Math.floor(expProgress[moduleIndex]*100) + "%";
+    } else {
+      element.element.classList.add("locked");
+    }
+  }
+
+  if (selectedModule !== null) {
+    /** @type {import("../upgradeGenerators.js").UpgradeGeneratorType} */
+    const moduleName = selectedModule.name;
+    const module = upgradeGenerators.find(upgradeGenerators => upgradeGenerators.name === moduleName);
+    const moduleSavedata = savedata.modules[moduleName];
+    const element = elements.modules.selected;
+
+    element.name.innerText = selectedModule.name;
+
+    element.effect.level.value.innerText = roman(selectedPreviewLevel+1);
+
+    const upgrade = module.getUpgrades(
+      moduleSavedata.tier,
+      Array.from({ length: selectedPreviewLevel }, (_, i) => i),
+      savedata,
+      1
+    )[0];
+    const effects = module.getUpgradeEffect(
+      moduleSavedata.tier,
+      selectedPreviewLevel,
+      savedata
+    );
+    element.effect.cost.innerText = notation(upgrade.cost);
+    for (let i = 0; i < element.effect.list.length; i++) {
+      const effectElement = element.effect.list[i];
+      const effectData = effects[i];
+      if (typeof effectData === "undefined") {
+        effectElement.element.style.display = "none";
+        continue;
+      }
+      /** @type {import("../../class/UpgradeEffects.js").EffectData} */
+      const effect = upgradeEffects.effectsDatas[effectData.name];
+      effectElement.element.style.display = "";
+      effectElement.name.innerText = effect.display.name;
+      effectElement.name.style.color = effect.display.color;
+      effectElement.value.innerText = effect.display.operator + " " + notation(effectData.value);
+    }
+
+    element.data.tier.innerText = moduleSavedata.tier;
+    element.data.exp.style.setProperty("--progress", expProgress[module.index]*100 + "%");
+    element.data.expText.innerText = notation(moduleSavedata.exp) + "/" + notation(expReq[module.index]);
+
+    element.button.equip.classList[savedata.selectedUpgrades.includes(moduleName) ? "add" : "remove"]("equiped");
+    element.button.upgrade.classList[canBuyUpgrade() ? "add" : "remove"]("can-upgrade");
+  }
+}
+
+/**
+ * @param {number} dt 
+ */
+function update(dt) {
+  if (savedata.watchingTab === "modules") render(dt);
+}
+
+export default update;

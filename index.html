@@ -4,8 +4,9 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="./index.js" type="module"></script>
-  <link rel="stylesheet" href="./index.css">
+  <script src="./game/index.js" type="module"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.15.4/js/all.js" integrity="sha384-rOA1PnstxnOBLzCLMcre8ybwbTmemjzdNlILg8O7z1lUkLXozs4DHonlDtnE7fpc" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="./style/index.css">
   <title>Module Incremental</title>
 </head>
 <body>
@@ -14,18 +15,95 @@
       0.00
     </div>
     <div id="upgrade-modules">
-
+      <!-- Upgrade Modules here -->
     </div>
     <div id="upgrade-list">
-      
+      <!-- Upgrade List here -->
     </div>
     <div id="contents">
-      <div id="effect-list">
-        
-      </div>
-      <div id="tabs">
-        
-      </div>
+      <span id="effect-list">
+        <!-- Effect List here -->
+      </span>
+      <span id="tabs-wrapper">
+        <div id="tab-buttons">
+          <span class="tab-button" data-tab-name="prestige">
+            <i class="fas fa-caret-square-up"></i>
+            Prestige
+          </span>
+          <span class="tab-button" data-tab-name="modules">
+            <i class="fas fa-puzzle-piece"></i>
+            Modules
+          </span>
+          <span class="tab-button" data-tab-name="options">
+            <i class="fas fa-cog"></i>
+            Options
+          </span>
+        </div>
+        <div id="tabs">
+          <div class="tab" data-tab-name="prestige" style="display: none;">
+            
+          </div>
+          <div class="tab" data-tab-name="modules">
+            <div id="upgrader">
+              <div id="upgrader__respec-button">
+                Respec
+              </div>
+              <div id="upgrader__display">
+                <span>You have</span>
+                <span id="upgrader__display__value">0/0</span>
+                <span>Upgraders</span>
+              </div>
+              <div id="upgrader__buy-button">
+                0
+              </div>
+            </div>
+            <div id="module-wrapper">
+              <span id="module-grid">
+                <!-- Modules Here -->
+              </span>
+              <span id="selected-module" style="display: none;">
+                <div id="selected-module__name">
+                  Module Name
+                </div>
+                <div id="selected-module__effects">
+                  <div id="selected-module__effects__level">
+                    <span id="selected-module__effects__level__prev-button">-1</span>
+                    <span id="selected-module__effects__level__value">I</span>
+                    <span id="selected-module__effects__level__next-button">+1</span>
+                  </div>
+                  <div id="selected-module__effect__cost">
+                    0
+                  </div>
+                  <div id="selected-module__effect__list">
+                    <!-- Effect List here -->
+                  </div>
+                </div>
+                <div id="selected-module__data">
+                  <div id="selected-module__data__tier">
+                    0
+                  </div>
+                  <div id="selected-module__data__exp">
+                    <div id="selected-module__data__exp__value">
+                      0/0
+                    </div>
+                  </div>
+                </div>
+                <div id="selected-module__buttons">
+                  <span id="selected-module__buttons__equip">
+                    Equip
+                  </span>
+                  <span id="selected-module__buttons__upgrade">
+                    Upgrade
+                  </span>
+                </div>
+              </span>
+            </div>
+          </div>
+          <div class="tab" data-tab-name="options" style="display: none;">
+            
+          </div>
+        </div>
+      </span>
     </div>
   </div>
 </body>

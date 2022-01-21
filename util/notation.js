@@ -2,7 +2,7 @@ import Decimal from "../lib/decimal.min.js";
 
 const ten = Decimal(10);
 
-function notation(x, p=2) {
+function notation(x=0, p=2) {
   x = Decimal(x);
   const sign = Decimal.sign(x);
   x = x.abs();

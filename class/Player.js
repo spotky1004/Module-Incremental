@@ -3,30 +3,43 @@ import typeEqualize from "../util/typeEqualize.js";
 
 /**
  * @typedef SavedataValues
- * @property {number} runStartTime
  * @property {number} lastTickAt
+ * @property {string} watchingTab
  * @property {number} autobuyCharge
  * @property {number} time
  * @property {number} prestigeTime
  * @property {Decimal} gold
  * @property {string[]} selectedUpgrades
  * @property {number[][]} boughtUpgrades
- * @property {Object<string, number>} upgradeTiers
+ * @property {Decimal} prestige
+ * @property {number} upgraders
+ * @property {Record<import("../game/upgradeGenerators.js").UpgradeGeneratorType, { tier: number, exp: Decimal }>} modules
  */
 
 /**
  * @type {SavedataValues}
  */
 const savedataDefaults = {
-  runStartTime: new Date().getTime(),
   lastTickAt: new Date().getTime(),
+  watchingTab: "modules",
   autobuyCharge: 0,
   time: 0,
   prestigeTime: 0,
   gold: Decimal(10),
   selectedUpgrades: [],
   boughtUpgrades: Array(20).fill().map(_ => []),
-  upgradeTiers: { },
+  prestige: new Decimal(0),
+  upgraders: 10,
+  modules: {
+    "Gold Mine": {
+      tier: 0,
+      exp: new Decimal(0),
+    },
+    "Prestige Gain": {
+      tier: 0,
+      exp: new Decimal(0)
+    }
+  }
 };
 
 

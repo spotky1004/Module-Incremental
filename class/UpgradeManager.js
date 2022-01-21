@@ -18,7 +18,7 @@ class UpgradeManager {
    * @param {number} count
    */
   getUpgradeList(savedata, count=10) {
-    const upgradeTiers = savedata.upgradeTiers;
+    const modulesData = savedata.modules;
     const selectedUpgrades = savedata.selectedUpgrades;
     const boughtUpgrades = savedata.boughtUpgrades;
 
@@ -29,7 +29,7 @@ class UpgradeManager {
       const upgradeGenerator = this.upgradeGenerators.find(upgradeGenerator => upgradeGenerator.name === upgradeName);
       const boughtUpgrade = boughtUpgrades[i];
       if (typeof upgradeGenerator === "undefined") continue;
-      upgrades.push(...upgradeGenerator.getUpgrades(upgradeTiers[upgradeName], boughtUpgrade, savedata, count));
+      upgrades.push(...upgradeGenerator.getUpgrades(modulesData[upgradeName].tier, boughtUpgrade, savedata, count));
     }
     upgrades.sort((a, b) => a.cost.comparedTo(b.cost));
     return upgrades.slice(0, count);
@@ -39,7 +39,7 @@ class UpgradeManager {
    * @param {import("./Player.js").SavedataValues} savedata 
    */
   getUpgradeEffects(savedata) {
-    const upgradeTiers = savedata.upgradeTiers;
+    const modulesData = savedata.modules;
     const selectedUpgrades = savedata.selectedUpgrades;
     const boughtUpgrades = savedata.boughtUpgrades;
 
@@ -52,7 +52,7 @@ class UpgradeManager {
       if (typeof upgradeGenerator === "undefined") continue;
       for (let j = 0; j < boughtUpgrade.length; j++) {
         const level = boughtUpgrade[j];
-        effects.push(...upgradeGenerator.getUpgradeEffect(upgradeTiers[upgradeName], level, savedata));
+        effects.push(...upgradeGenerator.getUpgradeEffect(modulesData[upgradeName].tier, level, savedata));
       }
     }
     
