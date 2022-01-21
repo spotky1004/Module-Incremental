@@ -1,4 +1,4 @@
-import UpgradeManager from "../class/UpgradeManager.js";
+import UpgradeManager from "../../class/UpgradeManager.js";
 import upgradeEffects from "./upgradeEffects.js";
 import upgradeGenerators from "./upgradeGenerators.js";
 

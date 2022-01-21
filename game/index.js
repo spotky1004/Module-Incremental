@@ -1,6 +1,11 @@
 import * as tabs from "./tabs/index.js";
-import elements from "./elements.js";
-import player, { savedata, saveKey } from "./player.js";
+import {
+  elements,
+  updateEffects,
+  player,
+  savedata,
+  saveKey
+} from "./data/index.js";
 
 /** @param {keyof elements["tabButtons"]} tabToMove */
 function moveTab(tabToMove) {
@@ -33,6 +38,7 @@ function tick() {
   savedata.prestigeTime += dt;
   savedata.lastTickAt = timeNow;
 
+  updateEffects();
   tabs.modules(dt);
   tabs.base(dt);
 

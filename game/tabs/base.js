@@ -1,9 +1,11 @@
-import upgradeGenerators from "../upgradeGenerators.js";
-import upgradeEffects from "../upgradeEffects.js";
-import upgradeManager from "../upgradeManager.js";
-
-import elements from "../elements.js";
-import { savedata } from "../player.js";
+import {
+  upgradeGenerators,
+  upgradeEffects,
+  effects,
+  upgradeManager,
+  elements,
+  savedata,
+} from "../data/index.js";
 
 import notation from "../../util/notation.js";
 
@@ -32,11 +34,9 @@ elements.upgrades.forEach((v, i) => {
 let upgradeList = [];
 let upgradeListUpdateTime = 0;
 /**
- * @param {import("../../class/Player.js").SavedataValues} savedata 
  * @param {number} dt 
- * @param {ReturnType<upgradeManager["getUpgradeEffects"]>} effects
  */
-function render(dt, effects) {
+function render(dt) {
   upgradeListUpdateTime += dt;
 
   if (upgradeListUpdateTime > 1000/20) {
@@ -115,13 +115,12 @@ function render(dt, effects) {
  * @param {number} dt 
  */
 function update(dt) {
-  const effects = upgradeManager.getUpgradeEffects(savedata);
-
   savedata.selectedUpgrades = [...new Set(savedata.selectedUpgrades)].slice(0, effects.maxModule.toNumber());
 
   const goldGain = effects.goldGain.mul(effects.goldGainMult);
   savedata.gold = savedata.gold.add(goldGain.mul(dt/1000));
-  elements.gold.innerText = notation(savedata.gold);
+  elements.resources.gold.innerText = notation(savedata.gold);
+  elements.resources.prestige.innerText = notation(savedata.prestige);
 
   savedata.autobuyCharge += effects.autobuy.toNumber() * dt / 1000;
   if (savedata.autobuyCharge > 1) {
@@ -131,7 +130,7 @@ function update(dt) {
     savedata.autobuyCharge %= 1;
   }
 
-  render(dt, effects);
+  render(dt);
 }
 
 export default update;

@@ -1,7 +1,7 @@
 import upgradeEffects from "./upgradeEffects.js";
 import upgradeGenerators from "./upgradeGenerators.js";
-import roman from "../util/roman.js";
-import notation from "../util/notation.js";
+import roman from "../../util/roman.js";
+import notation from "../../util/notation.js";
 
 /**
  * @typedef {["modules", "prestige", "options"][number]} TabNames
@@ -21,7 +21,12 @@ import notation from "../util/notation.js";
  * @property {HTMLDivElement} cost
  */
 const elements = {
-  gold: document.getElementById("gold"),
+  /** @typedef {["gold", "prestige"][number]} ResourceNames */
+  /** @type {Record<ResourceNames, HTMLSpanElement>} */
+  resources: {
+    gold: document.getElementById("resources__gold"),
+    prestige: document.getElementById("resources__prestige")
+  },
   /** @type {HTMLSpanElement[]} */
   upgradeModules: [],
   /** @type {Upgrade[]} */

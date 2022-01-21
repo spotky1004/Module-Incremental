@@ -29,7 +29,7 @@ const savedataDefaults = {
   selectedUpgrades: [],
   boughtUpgrades: Array(20).fill().map(_ => []),
   prestige: new Decimal(0),
-  upgraders: 10,
+  upgraders: 0,
   modules: {
     "Gold Mine": {
       tier: 0,

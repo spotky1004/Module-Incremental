@@ -7,6 +7,11 @@ import Decimal from "../lib/decimal.min.js";
  * @returns {number | Decimal}
  */
 /**
+ * @callback EffectFinalizeFunc
+ * @param {Decimal} value
+ * @returns {number | Decimal}
+ */
+/**
  * @typedef EffectDisplay
  * @property {string} name
  * @property {string} operator
@@ -16,6 +21,7 @@ import Decimal from "../lib/decimal.min.js";
  * @typedef EffectData
  * @property {number | string} defaultValue
  * @property {EffectReducerFunc} effectReducerFunc
+ * @property {EffectFinalizeFunc} effectFinalizeFunc
  * @property {EffectDisplay} display
  */
 
@@ -65,6 +71,11 @@ class UpgradeEffects {
         effects[effectName],
         effectChunk.value
       );
+    }
+
+    for (const effectName in this.effectsDatas) {
+      const effectData = this.effectsDatas[effectName];
+      effects[effectName] = effectData.effectFinalizeFunc(effects[effectName]);
     }
 
     return effects;

@@ -1,11 +1,11 @@
 import { UPGRADE_LEVEL_LIMIT as upgradeLevelLimit } from "../../class/UpgradeGenerator.js";
-
-import upgradeGenerators from "../upgradeGenerators.js";
-import upgradeEffects from "../upgradeEffects.js";
-import upgradeManager from "../upgradeManager.js";
-
-import elements from "../elements.js";
-import { savedata } from "../player.js";
+import {
+  upgradeGenerators,
+  upgradeEffects,
+  effects,
+  elements,
+  savedata
+} from "../data/index.js";
 
 import Decimal from "../../lib/decimal.min.js";
 import notation from "../../util/notation.js";
@@ -41,9 +41,15 @@ function chancePreviewLevel(n) {
 }
 elements.modules.selected.effect.level.next.addEventListener("click", () => chancePreviewLevel(1));
 elements.modules.selected.effect.level.prev.addEventListener("click", () => chancePreviewLevel(-1));
+function canEquip() {
+  return !(
+    selectedModule === null ||
+    savedata.selectedUpgrades.includes(selectedModule.name) ||
+    effects.maxModule.toNumber() <= savedata.selectedUpgrades.length
+  )
+}
 elements.modules.selected.button.equip.addEventListener("click", () => {
-  if (selectedModule === null) return;
-  if (savedata.selectedUpgrades.includes(selectedModule.name)) return;
+  if (!canEquip()) return;
   savedata.selectedUpgrades.push(selectedModule.name);
 });
 elements.modules.selected.button.upgrade.addEventListener("click", () => {
@@ -170,7 +176,7 @@ function render(dt) {
     element.data.exp.style.setProperty("--progress", expProgress[module.index]*100 + "%");
     element.data.expText.innerText = notation(moduleSavedata.exp) + "/" + notation(expReq[module.index]);
 
-    element.button.equip.classList[savedata.selectedUpgrades.includes(moduleName) ? "add" : "remove"]("equiped");
+    element.button.equip.classList[!canEquip() ? "add" : "remove"]("equiped");
     element.button.upgrade.classList[canBuyUpgrade() ? "add" : "remove"]("can-upgrade");
   }
 }
