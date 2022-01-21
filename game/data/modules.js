@@ -27,7 +27,7 @@ const modules = [
     index: moduleEnum["Gold Mine"],
     color: "#d4d41e",
     effects: {
-      [effect.goldGain]: (tier, level, savedata) => Decimal(level+1).pow(1+tier/10)
+      [effect.goldGain]: (tier, level, savedata) => Decimal(level+1).pow(1+tier/2)
     },
     cost: (tier, level, savedata) => Decimal(level+5).pow(3+Math.max(0, level/20)).div(25)
   }),
@@ -37,7 +37,7 @@ const modules = [
     index: moduleEnum["Gold Duplicator"],
     color: "#d1d194",
     effects: {
-      [effect.goldGainMult]: (tier, level, savedata) => Decimal(2+tier/2+level/10)
+      [effect.goldGainMult]: (tier, level, savedata) => Decimal(3+(tier+1)*(level/4+1))
     },
     cost: (tier, level, savedata) => factroial(level).mul(Decimal((100+level*10)/(tier/3+1)).pow(level+1))
   }),
@@ -49,7 +49,7 @@ const modules = [
     effects: {
       [effect.goldGainMult]: (tier, level, savedata) => Decimal(savedata.prestigeTime/1000/(20+level*10)).pow(0.5+tier/20).mul(1+level/2).add(1)
     },
-    cost: (tier, level, savedata) => Decimal(1e10).pow(level+1).mul(Decimal(savedata.prestigeTime/1000).pow(1/(tier+1)).add(1))
+    cost: (tier, level, savedata) => Decimal(1e4).pow(level+1).mul(100).mul(Decimal(savedata.prestigeTime/1000).pow(1/(tier+1)).add(1))
   }),
   new UpgradeGenerator({
     name: "Decay Boost",
@@ -57,9 +57,9 @@ const modules = [
     index: moduleEnum["Decay Boost"],
     color: "#bd72e8",
     effects: {
-      [effect.goldGainMult]: (tier, level, savedata) => Decimal((level+1)*(tier+1)).div(1+savedata.prestigeTime/1000/(100+level*50)).add(1)
+      [effect.goldGainMult]: (tier, level, savedata) => Decimal((level+4)*(tier+1)).div(1+savedata.prestigeTime/1000/(100+level*50)).add(1)
     },
-    cost: (tier, level, savedata) => Decimal(1e10).pow(level+1).div(Decimal(savedata.prestigeTime/1000).pow(tier+1).add(1))
+    cost: (tier, level, savedata) => Decimal(1e4).pow(level+1).mul(100).div(Decimal(savedata.prestigeTime/1000).pow(tier+1).add(1))
   }),
   new UpgradeGenerator({
     name: "Sacrifice",
@@ -84,7 +84,7 @@ const modules = [
   }),
   new UpgradeGenerator({
     name: "Autobuy",
-    rarity: 5,
+    rarity: 3,
     index: moduleEnum["Autobuy"],
     color: "#67f0b2",
     effects: {
@@ -94,13 +94,13 @@ const modules = [
   }),
   new UpgradeGenerator({
     name: "Extra Module",
-    rarity: 6,
+    rarity: 1.5,
     index: moduleEnum["Extra Module"],
     color: "#67f0db",
     effects: {
-      [effect.maxModule]: (tier, level, savedata) => 0.1*Math.sqrt(tier),
+      [effect.maxModule]: (tier, level, savedata) => 0.11*Math.sqrt(tier+1),
     },
-    cost: (tier, level, savedata) => Decimal.max(1, 10/(tier/10+1)).pow(Decimal(2).pow(level))
+    cost: (tier, level, savedata) => Decimal.max(1, 10/(tier/3+1)).pow(Decimal(1.28).pow(level))
   }),
 ];
 

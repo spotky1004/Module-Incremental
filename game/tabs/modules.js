@@ -7,6 +7,7 @@ import {
   elements,
   savedata
 } from "../data/index.js";
+import { prestigeReset } from "./prestige.js";
 
 import Decimal from "../../lib/decimal.min.js";
 import notation from "../../util/notation.js";
@@ -62,10 +63,12 @@ elements.modules.selected.button.upgrade.addEventListener("click", () => {
   }
 });
 elements.modules.upgrader.button.respec.addEventListener("click", () => {
-  if (!window.confirm("Are you sure to respec Upgraders?")) return;
+  if (!window.confirm("Are you sure to respec Module/Upgraders?")) return;
   for (const moduleName in savedata.modules) {
     savedata.modules[moduleName].tier = Math.min(savedata.modules[moduleName].tier, 0);
   }
+  savedata.selectedUpgrades = [];
+  prestigeReset();
 });
 function calculateUpgraderCost() {
   return new Decimal(2+savedata.upgraders/10).pow((savedata.upgraders+1)**1.2).floor();

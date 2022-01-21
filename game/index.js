@@ -41,7 +41,7 @@ function tick() {
   updateEffects();
   tabs.prestige(dt);
   tabs.modules(dt);
-  tabs.base(dt*10);
+  tabs.base(dt);
 
   requestAnimationFrame(tick);
 }

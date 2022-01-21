@@ -58,7 +58,11 @@ function render(dt) {
       }
     }
 
-    upgradeList = upgradeManager.getUpgradeList(savedata, 10);
+    upgradeList = upgradeManager.getUpgradeList(
+      savedata,
+      savedata.selectedUpgrades.slice(0, effects.maxModule.toNumber()),
+      10
+    );
     for (let i = 0; i < elements.upgrades.length; i++) {
       const upgrade = upgradeList[i];
       const upgradeElement = elements.upgrades[i];
@@ -115,7 +119,7 @@ function render(dt) {
  * @param {number} dt 
  */
 function update(dt) {
-  savedata.selectedUpgrades = [...new Set(savedata.selectedUpgrades)].slice(0, effects.maxModule.toNumber());
+  savedata.selectedUpgrades = [...new Set(savedata.selectedUpgrades)];
 
   const goldGain = effects.goldGain.mul(effects.goldGainMult);
   savedata.gold = savedata.gold.add(goldGain.mul(dt/1000));

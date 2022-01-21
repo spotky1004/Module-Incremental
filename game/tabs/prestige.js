@@ -9,10 +9,9 @@ import elements from "../data/elements.js";
 import Decimal from "../../lib/decimal.min.js";
 import notation from "../../util/notation.js";
 
-function prestigeReset() {
+export function prestigeReset() {
   savedata.prestigeTime = 0;
   savedata.boughtUpgrades = savedata.boughtUpgrades.map(v => v = []);
-  savedata.selectedUpgrades = [];
   savedata.autobuyCharge = 0;
   savedata.gold = Decimal(0);
 }

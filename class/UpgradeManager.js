@@ -15,11 +15,11 @@ class UpgradeManager {
 
   /**
    * @param {import("./Player.js").SavedataValues} savedata 
+   * @param {string[]} selectedUpgrades
    * @param {number} count
    */
-  getUpgradeList(savedata, count=10) {
+  getUpgradeList(savedata, selectedUpgrades=[], count=10) {
     const modulesData = savedata.modules;
-    const selectedUpgrades = savedata.selectedUpgrades;
     const boughtUpgrades = savedata.boughtUpgrades;
 
     /** @type {import("./UpgradeGenerator.js").UpgradeChunk[]} */
