@@ -1,5 +1,5 @@
 import upgradeEffects from "./upgradeEffects.js";
-import upgradeGenerators from "./upgradeGenerators.js";
+import { getModuleByIndex } from "./modules.js";
 import roman from "../../util/roman.js";
 import notation from "../../util/notation.js";
 
@@ -44,6 +44,18 @@ const elements = {
     modules: document.querySelector("#tabs > div[data-tab-name=modules]"),
     prestige: document.querySelector("#tabs > div[data-tab-name=prestige]"),
     options: document.querySelector("#tabs > div[data-tab-name=options]"),
+  },
+  prestige: {
+    /** @type {HTMLDivElement} */
+    button: document.getElementById("prestige-button"),
+    info: {
+      /** @type {HTMLSpanElement} */
+      prevPrestige: document.getElementById("prestige-prev__value-prestige"),
+      /** @type {HTMLSpanElement} */
+      nextPrestige: document.getElementById("prestige-next__value-prestige"),
+      /** @type {HTMLSpanElement} */
+      nextModule: document.getElementById("prestige-next__value-module"),
+    }
   },
   modules: {
     /** @type {{ element: HTMLSpanElement, tier: HTMLDivElement, check: SVGGraphicsElement, exp: HTMLDivElement }[]} */
@@ -185,15 +197,15 @@ for (let i = 0; i < 36; i++) {
   const gridItem = {};
   elements.modules.grid.push(gridItem);
 
-  const upgradeGenerator = upgradeGenerators.find(upgradeGenerator => upgradeGenerator.index === i);
+  const module = getModuleByIndex(i);
 
   gridItem.element = document.createElement("span");
   gridItem.element.classList.add("module-grid__item");
-  gridItem.element.dataset.name = upgradeGenerator?.name ?? "hi!";
+  gridItem.element.dataset.name = module?.name ?? "hi!";
   gridItem.element.dataset.index = i;
   gridItem.element.classList.add("locked");
   gridItem.element.classList.add("equip");
-  const color = upgradeGenerator?.color ?? "";
+  const color = module?.color ?? "";
   if (color === "") gridItem.element.style.opacity = 0;
   gridItem.element.style.setProperty("--color", color);
   gridItem.element.style.setProperty("--rotate", (Math.random()*20-10)+"deg");

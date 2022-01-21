@@ -35,6 +35,7 @@ class UpgradeGenerator {
    * @property {string} color
    * @property {Object<string, UpgradeEffectFunc>} effects
    * @property {UpgradeCostFunc} cost
+   * @property {number} rarity
    */
   /**
    * @param {UpgradeParams} options 
@@ -50,6 +51,8 @@ class UpgradeGenerator {
     this.effects = options.effects;
     /** @type {options["cost"]} */
     this.cost = options.cost;
+    /** @type {options["rarity"]} */
+    this.rarity = options.rarity ?? Infinity;
   }
 
   /**

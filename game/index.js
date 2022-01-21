@@ -39,8 +39,9 @@ function tick() {
   savedata.lastTickAt = timeNow;
 
   updateEffects();
+  tabs.prestige(dt);
   tabs.modules(dt);
-  tabs.base(dt);
+  tabs.base(dt*10);
 
   requestAnimationFrame(tick);
 }

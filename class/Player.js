@@ -4,7 +4,7 @@ import typeEqualize from "../util/typeEqualize.js";
 /**
  * @typedef SavedataValues
  * @property {number} lastTickAt
- * @property {string} watchingTab
+ * @property {import("../game/data/elements.js").TabNames} watchingTab
  * @property {number} autobuyCharge
  * @property {number} time
  * @property {number} prestigeTime

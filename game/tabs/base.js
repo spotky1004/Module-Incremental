@@ -1,5 +1,5 @@
 import {
-  upgradeGenerators,
+  getModuleByName,
   upgradeEffects,
   effects,
   upgradeManager,
@@ -42,11 +42,11 @@ function render(dt) {
   if (upgradeListUpdateTime > 1000/20) {
     const selectedUpgrades = savedata.selectedUpgrades;
     for (let i = 0; i < elements.upgradeModules.length; i++) {
-      const upgrade = upgradeGenerators.find(upgradeGenerator => upgradeGenerator.name === selectedUpgrades[i]);
+      const module = getModuleByName(selectedUpgrades[i]);
       const upgradeModuleElement = elements.upgradeModules[i];
-      if (typeof upgrade !== "undefined") {
-        upgradeModuleElement.innerText = upgrade.name + " T" + savedata.modules[upgrade.name].tier;
-        upgradeModuleElement.style.color = upgrade.color;
+      if (typeof module !== "undefined") {
+        upgradeModuleElement.innerText = module.name + " T" + savedata.modules[module.name].tier;
+        upgradeModuleElement.style.color = module.color;
       } else {
         if (i >= effects.maxModule.toNumber()) {
           upgradeModuleElement.innerText = "Locked";

@@ -1,6 +1,7 @@
 import { UPGRADE_LEVEL_LIMIT as upgradeLevelLimit } from "../../class/UpgradeGenerator.js";
 import {
-  upgradeGenerators,
+  getModuleByIndex,
+  getModuleByName,
   upgradeEffects,
   effects,
   elements,
@@ -18,7 +19,7 @@ function selectModule(idx) {
   idx = Number(idx);
 
   if (idx !== selectedModule?.index) {
-    const module = upgradeGenerators.find(upgradeGenerator => upgradeGenerator.index === idx) ?? null;
+    const module = getModuleByIndex(idx);
     if (module === null) return;
     const moduleSavedata = savedata.modules[module.name];
     if (moduleSavedata.tier < 0) return;
@@ -66,11 +67,11 @@ elements.modules.upgrader.button.respec.addEventListener("click", () => {
     savedata.modules[moduleName].tier = Math.min(savedata.modules[moduleName].tier, 0);
   }
 });
-function getUpgraderCost() {
-  return new Decimal(10+savedata.upgraders*2).pow((savedata.upgraders+1)**1.2)
+function calculateUpgraderCost() {
+  return new Decimal(2+savedata.upgraders/10).pow((savedata.upgraders+1)**1.2).floor();
 }
 elements.modules.upgrader.button.buy.addEventListener("click", () => {
-  const cost = getUpgraderCost();
+  const cost = calculateUpgraderCost();
   if (savedata.prestige.gt(cost)) {
     savedata.prestige = savedata.prestige.sub(cost);
     savedata.upgraders += 1;
@@ -78,12 +79,12 @@ elements.modules.upgrader.button.buy.addEventListener("click", () => {
 });
 
 function calculateExpReq(tier) {
-  return new Decimal(10+tier**2).pow(tier+1);
+  return new Decimal(2+tier**1.2).pow(tier+1).floor();
 }
 function getUsedUpgrader() {
   let used = 0;
   for (const moduleName in savedata.modules) {
-    used += Math.max(1, savedata.modules[moduleName].tier)-1;
+    used += Math.max(0, savedata.modules[moduleName].tier);
   }
   return used;
 }
@@ -96,7 +97,7 @@ function canBuyUpgrade() {
   const moduleSave = savedata.modules[selectedModule.name];
   const expReq = calculateExpReq(moduleSave.tier);
   if (
-    moduleSave.exp.gt(expReq) &&
+    moduleSave.exp.gte(expReq) &&
     getUpgrader() >= 1
   ) {
     return true;
@@ -113,13 +114,13 @@ function render(dt) {
   /** @type {number[]} */
   let expProgress = [];
 
-  elements.modules.upgrader.button.buy.innerText = notation(getUpgraderCost());
+  elements.modules.upgrader.button.buy.innerText = notation(calculateUpgraderCost());
   elements.modules.upgrader.value.innerText = getUpgrader() + "/" + savedata.upgraders
 
   for (let i = 0; i < elements.modules.grid.length; i++) {
-    const module = upgradeGenerators.find(upgradeGenerator => upgradeGenerator.index === i);
+    const module = getModuleByIndex(i);
     if (typeof module === "undefined") continue;
-    /** @type {import("../upgradeGenerators.js").UpgradeGeneratorType} */
+    /** @type {import("../data/modules.js").ModuleTypes} */
     const moduleName = module.name;
     const moduleIndex = module.index;
     const moduleSavedata = savedata.modules[moduleName];
@@ -140,7 +141,7 @@ function render(dt) {
   if (selectedModule !== null) {
     /** @type {import("../upgradeGenerators.js").UpgradeGeneratorType} */
     const moduleName = selectedModule.name;
-    const module = upgradeGenerators.find(upgradeGenerators => upgradeGenerators.name === moduleName);
+    const module = getModuleByName(moduleName);
     const moduleSavedata = savedata.modules[moduleName];
     const element = elements.modules.selected;
 
