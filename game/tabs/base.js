@@ -2,6 +2,7 @@ import {
   getModuleByName,
   upgradeEffects,
   effects,
+  rawEffects,
   upgradeManager,
   elements,
   savedata,
@@ -109,7 +110,7 @@ function render(dt) {
       elements.effects[effectElementIdx].element.style.display = "none";
     } else {
       elements.effects[effectElementIdx].element.style.display = "";
-      elements.effects[effectElementIdx].value.innerText = operator + " " + notation(effects[effectName]);
+      elements.effects[effectElementIdx].value.innerText = operator + " " + notation(rawEffects[effectName]);
     }
     effectElementIdx++;
   }

@@ -1,14 +1,16 @@
 import upgradeManager from "./upgradeManager.js";
 import { savedata } from "./player.js";
 
-const effects = upgradeManager.getUpgradeEffects(savedata);
+const { rawEffects, effects } = upgradeManager.getUpgradeEffects(savedata);
 
 function updateEffects() {
   const tmpEffects = upgradeManager.getUpgradeEffects(savedata);
-  for (const effectName in tmpEffects) {
-    effects[effectName] = tmpEffects[effectName];
+  for (const effectName in tmpEffects.effects) {
+    effects[effectName] = tmpEffects.effects[effectName];
+  }
+  for (const effectName in tmpEffects.rawEffects) {
+    rawEffects[effectName] = tmpEffects.rawEffects[effectName];
   }
 }
 
-export default effects;
-export { updateEffects };
+export { effects, rawEffects, updateEffects };

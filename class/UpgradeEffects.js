@@ -53,7 +53,6 @@ class UpgradeEffects {
 
   /**
    * @param {EffectChunk[]} effectChunks 
-   * @returns {Record<keyof T, Decimal>}
    */
   calculateEffect(effectChunks) {
     /** @type {Record<keyof T, Decimal>} */
@@ -72,13 +71,14 @@ class UpgradeEffects {
         effectChunk.value
       );
     }
+    const rawEffects = {...effects};
 
     for (const effectName in this.effectsDatas) {
       const effectData = this.effectsDatas[effectName];
       effects[effectName] = effectData.effectFinalizeFunc(effects[effectName]);
     }
 
-    return effects;
+    return { rawEffects, effects };
   }
 }
 
