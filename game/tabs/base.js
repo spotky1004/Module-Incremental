@@ -9,6 +9,7 @@ import {
 } from "../data/index.js";
 
 import notation from "../../util/notation.js";
+import calcProgress from "../../util/calcProgress.js";
 
 /**
  * @param {number} idx 
@@ -78,7 +79,7 @@ function render(dt) {
       upgradeElement.name.style.color = upgrade.color;
       upgradeElement.cost.innerText = notation(upgrade.cost);
       upgradeElement.cost.style.color = savedata.gold.lt(upgrade.cost) ? "#fc8181" : "";
-      upgradeElement.cost.style.setProperty("--progress", savedata.gold.div(upgrade.cost).mul(100)+"%")
+      upgradeElement.cost.style.setProperty("--progress", calcProgress(savedata.gold, upgrade.cost)*100 +"%")
 
       for (let j = 0; j < upgradeElement.effects.length; j++) {
         const effect = upgrade.effect[j];
@@ -102,11 +103,11 @@ function render(dt) {
 
   
   let effectElementIdx = 0;
-  for (const effectName in effects) {
+  for (const effectName in rawEffects) {
     /** @type {import("./class/UpgradeEffects.js").EffectData} */
     const effectData = upgradeEffects.effectsDatas[effectName];
     const operator = effectData.display.operator;
-    if (effects[effectName].eq(effectData.defaultValue)) {
+    if (rawEffects[effectName].eq(effectData.defaultValue)) {
       elements.effects[effectElementIdx].element.style.display = "none";
     } else {
       elements.effects[effectElementIdx].element.style.display = "";

@@ -1,5 +1,7 @@
 import upgradeEffects from "./upgradeEffects.js";
-import { getModuleByIndex } from "./modules.js";
+import { getModuleByIndex, moduleChances } from "./modules.js";
+
+import Decimal from "../../lib/decimal.min.js";
 import roman from "../../util/roman.js";
 import notation from "../../util/notation.js";
 
@@ -203,6 +205,7 @@ for (let i = 0; i < 36; i++) {
   gridItem.element.classList.add("module-grid__item");
   gridItem.element.dataset.name = module?.name ?? "hi!";
   gridItem.element.dataset.index = i;
+  gridItem.element.dataset.chance = notation(Decimal(1).div(moduleChances[i]).ceil());
   gridItem.element.classList.add("locked");
   gridItem.element.classList.add("equip");
   const color = module?.color ?? "";

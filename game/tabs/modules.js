@@ -12,6 +12,7 @@ import { prestigeReset } from "./prestige.js";
 import Decimal from "../../lib/decimal.min.js";
 import notation from "../../util/notation.js";
 import roman from "../../util/roman.js";
+import calcProgress from "../../util/calcProgress.js";
 
 /** @type {import("../../class/UpgradeGenerator.js").default} */
 let selectedModule = null;
@@ -21,7 +22,7 @@ function selectModule(idx) {
 
   if (idx !== selectedModule?.index) {
     const module = getModuleByIndex(idx);
-    if (module === null) return;
+    if (typeof module === "undefined") return;
     const moduleSavedata = savedata.modules[module.name];
     if (moduleSavedata.tier < 0) return;
     selectedModule = module;
@@ -81,8 +82,24 @@ elements.modules.upgrader.button.buy.addEventListener("click", () => {
   }
 });
 
-function calculateExpReq(tier) {
-  return new Decimal(2+tier**1.2).pow(tier+1).floor();
+window.Decimal = Decimal;
+/**
+ * @param {number} tier 
+ * @param {number} rarity 
+ * @returns {Decimal}
+ */
+function calculateExpReq(tier, rarity) {
+  if (typeof rarity === "number") {
+    return new Decimal(2+tier**1.2)
+      .pow(tier+1)
+      .pow(Math.log10(rarity+1)+1) // fix inflation
+      .div(Math.log2(rarity+1)+1)
+      .div(tier+1)
+      .pow(1+Math.floor(tier/4)/4) // softcap
+      .ceil();
+  } else {
+    return Decimal((tier+1)**2);
+  }
 }
 function getUsedUpgrader() {
   let used = 0;
@@ -98,7 +115,8 @@ function canBuyUpgrade() {
   if (selectedModule === null) return false;
   /** @type {savedata["modules"][keyof savedata["modules"]]} */
   const moduleSave = savedata.modules[selectedModule.name];
-  const expReq = calculateExpReq(moduleSave.tier);
+  const moudle = getModuleByName(selectedModule.name);
+  const expReq = calculateExpReq(moduleSave.tier, moudle.rarity);
   if (
     moduleSave.exp.gte(expReq) &&
     getUpgrader() >= 1
@@ -133,8 +151,8 @@ function render(dt) {
     if (moduleSavedata.tier >= 0) {
       element.element.classList.remove("locked");
       element.tier.innerText = moduleSavedata.tier;
-      expReq[moduleIndex] = calculateExpReq(moduleSavedata.tier);
-      expProgress[moduleIndex] = Math.min(1, moduleSavedata.exp.div(expReq[moduleIndex]).toNumber());
+      expReq[moduleIndex] = calculateExpReq(moduleSavedata.tier, module.rarity);
+      expProgress[moduleIndex] = calcProgress(moduleSavedata.exp, expReq[moduleIndex]);
       element.exp.innerText = Math.floor(expProgress[moduleIndex]*100) + "%";
     } else {
       element.element.classList.add("locked");

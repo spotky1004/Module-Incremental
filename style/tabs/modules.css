@@ -122,11 +122,28 @@
     transform: translateX(-50%) rotateX(0deg);
   }
 }
-.module-grid__item.locked {
-  pointer-events: none;
-}
 .module-grid__item.locked > * {
   display: none;
+}
+.module-grid__item.locked:hover::before {
+  content: "At " attr(data-chance) " Module";
+
+  padding: 0.5vmin;
+
+  position: absolute;
+  top: -50%;
+  left: 50%; 
+  transform: translateX(-50%);
+
+  white-space: nowrap;
+  color: var(--color);
+  text-shadow: 0 0 0.2vmin #fff;
+
+  background-color: #0008;
+  border-radius: 0.5vmin;
+
+  pointer-events: none;
+  animation: moduleNameAppear 0.4s ease-out;
 }
 .module-grid__item__tier {
   position: absolute;

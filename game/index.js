@@ -7,6 +7,8 @@ import {
   saveKey
 } from "./data/index.js";
 
+const ENV = window.location?.hostname === "127.0.0.1" ? "development" : "production";
+
 /** @param {keyof elements["tabButtons"]} tabToMove */
 function moveTab(tabToMove) {
   const tabButtonElement = elements.tabButtons[tabToMove];
@@ -33,7 +35,11 @@ function tick() {
     player.save(saveKey);
     lastSaveAt = timeNow;
   }
-  const dt = timeNow - savedata.lastTickAt;
+  let dt = timeNow - savedata.lastTickAt;
+  if (ENV === "development") {
+    // savedata.autobuyCharge += 1;
+    dt *= 10;
+  }
   savedata.time += dt;
   savedata.prestigeTime += dt;
   savedata.lastTickAt = timeNow;

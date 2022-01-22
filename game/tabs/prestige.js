@@ -17,7 +17,7 @@ export function prestigeReset() {
 }
 
 function getPrestigeGain() {
-  return effects.prestigeGain;
+  return effects.prestigeGain.add(savedata.prestige.mul(effects.prestigeKeep.div(100)));
 }
 function getModuleGain() {
   return savedata.prestige;

@@ -32,6 +32,16 @@ const upgradeEffects = new UpgradeEffects({
       operator: "+"
     }
   },
+  prestigeKeep: {
+    defaultValue: 0,
+    effectReducerFunc: (a, b) => Decimal.min(100, a.add(b)),
+    effectFinalizeFunc: (value) => value,
+    display: {
+      name: "Prestige Keep",
+      color: "#63e5ff",
+      operator: "%"
+    }
+  },
   autobuy: {
     defaultValue: 0,
     effectReducerFunc: (a, b) => a.add(b),
@@ -49,7 +59,7 @@ const upgradeEffects = new UpgradeEffects({
     display: {
       name: "Max Module",
       color: "#ffffff",
-      operator: "+"
+      operator: " "
     }
   }
 });

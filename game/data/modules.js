@@ -10,8 +10,9 @@ export const moduleEnum = {
   "Growth Boost": 2,
   "Decay Boost": 3,
   "Sacrifice": 4,
-
+  
   "Prestige Gain": 6,
+  "Prestige Relay": 7,
   
   "Autobuy": 30,
   "Extra Module": 31,
@@ -49,7 +50,7 @@ const modules = [
     effects: {
       [effect.goldGainMult]: (tier, level, savedata) => Decimal(savedata.prestigeTime/1000/(20+level*10)).pow(0.5+tier/20).mul(1+level/2).add(1)
     },
-    cost: (tier, level, savedata) => Decimal(1e4).pow(level+1).mul(100).mul(Decimal(savedata.prestigeTime/1000).pow(1/(tier+1)).add(1))
+    cost: (tier, level, savedata) => Decimal(100).add(factroial(1+level/2)).pow(level+1).mul(1e4).mul(Decimal(savedata.prestigeTime/1000).pow(1/(tier+1)).add(1))
   }),
   new UpgradeGenerator({
     name: "Decay Boost",
@@ -57,13 +58,13 @@ const modules = [
     index: moduleEnum["Decay Boost"],
     color: "#bd72e8",
     effects: {
-      [effect.goldGainMult]: (tier, level, savedata) => Decimal((level+4)*(tier+1)).div(1+savedata.prestigeTime/1000/(100+level*50)).add(1)
+      [effect.goldGainMult]: (tier, level, savedata) => Decimal((level+4)*(tier+1)).div(1+savedata.prestigeTime/1000/(100+level*50)/(tier+1)).add(1)
     },
-    cost: (tier, level, savedata) => Decimal(1e4).pow(level+1).mul(100).div(Decimal(savedata.prestigeTime/1000).pow(tier+1).add(1))
+    cost: (tier, level, savedata) => Decimal(100).add(factroial(1+level/2)).pow(level+1).mul(1e4).div(Decimal(savedata.prestigeTime/1000).pow(tier+1).add(1))
   }),
   new UpgradeGenerator({
     name: "Sacrifice",
-    rarity: 4,
+    rarity: 5,
     index: moduleEnum["Sacrifice"],
     color: "#de3535",
     effects: {
@@ -72,6 +73,7 @@ const modules = [
     },
     cost: (tier, level, savedata) => Decimal(9).div(tier/6+1).add(1).pow(level**2).mul(1000)
   }),
+
   new UpgradeGenerator({
     name: "Prestige Gain",
     rarity: 3.5,
@@ -83,12 +85,24 @@ const modules = [
     cost: (tier, level, savedata) => Decimal(10).pow(level*(1+level/20)+3).div(Decimal(6).pow(tier))
   }),
   new UpgradeGenerator({
+    name: "Prestige Relay",
+    rarity: 10,
+    index: moduleEnum["Prestige Relay"],
+    color: "#25d2f5",
+    effects: {
+      [effect.prestigeKeep]: (tier, level, savedata) => 0.1*Math.sqrt((level+1)*(tier+1))
+    },
+    cost: (tier, level, savedata) => Decimal((level+4)**2-6).pow(level**1.2).mul(1e7)
+  }),
+
+  new UpgradeGenerator({
     name: "Autobuy",
     rarity: 3,
     index: moduleEnum["Autobuy"],
     color: "#67f0b2",
     effects: {
-      [effect.autobuy]: (tier, level, savedata) => 0.01*(tier/2+1),
+      [effect.autobuy]: (tier, level, savedata) => 0.25*(tier+1),
+      [effect.maxModule]: (tier, level, savedata) => 0.04,
     },
     cost: (tier, level, savedata) => Decimal.max(1, Decimal(2*(level-tier))).pow(level).mul(1000).div(Decimal(2).pow(tier-level))
   }),
@@ -98,7 +112,7 @@ const modules = [
     index: moduleEnum["Extra Module"],
     color: "#67f0db",
     effects: {
-      [effect.maxModule]: (tier, level, savedata) => 0.11*Math.sqrt(tier+1),
+      [effect.maxModule]: (tier, level, savedata) => Math.max(0.05, 0.11*Math.sqrt(tier+1) - (level > 15 ? (level-14)/33 : 0)),
     },
     cost: (tier, level, savedata) => Decimal.max(1, 10/(tier/3+1)).pow(Decimal(1.28).pow(level))
   }),
